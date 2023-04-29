@@ -1,9 +1,13 @@
 const fs = require('fs');
 const express = require('express');
+const morgan = require('morgan');
 
 const app = express();
 
 // middleware
+
+app.use(morgan('dev'));
+
 app.use(express.json());
 
 app.use((req, res, next) => {
@@ -21,6 +25,7 @@ const tours = JSON.parse(
 );
 
 // route handlers
+
 const getAllTours = (req, res) => {
   console.log(req.requestTime);
   res.status(200).json({
@@ -141,6 +146,8 @@ app
   .get(getTour)
   .patch(updateTour)
   .delete(deleteTour);
+
+// start server
 
 const port = 3000;
 app.listen(port, () => {
