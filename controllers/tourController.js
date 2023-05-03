@@ -8,7 +8,7 @@ const tours = JSON.parse(
 
 exports.checkID = (req, res, next, val) => {
   console.log(`tour id: ${val}`);
-  const id = parseInt(req.params.id);
+  const id = parseInt(req.params.id, 10);
   if (id >= tours.length) {
     return res.status(404).json({
       status: 'fail',
@@ -42,7 +42,7 @@ exports.getAllTours = (req, res) => {
 };
 
 exports.getTour = (req, res) => {
-  const id = parseInt(req.params.id); // 123abc -> 123
+  const id = parseInt(req.params.id, 10); // 123abc -> 123
 
   const tour = tours.find((el) => el.id === id);
 
@@ -62,7 +62,7 @@ exports.createTour = (req, res) => {
   fs.writeFile(
     `${__dirname}/dev-data/data/tours-simple.json`,
     JSON.stringify(tours),
-    (err) => {
+    () => {
       res.status(201).json({
         status: 'success',
         data: {
@@ -74,7 +74,7 @@ exports.createTour = (req, res) => {
 };
 
 exports.updateTour = (req, res) => {
-  const id = parseInt(req.params.id);
+  const id = parseInt(req.params.id, 10);
 
   const updatedTours = tours.map((tour) => {
     if (tour.id === id) {
@@ -85,7 +85,7 @@ exports.updateTour = (req, res) => {
   fs.writeFile(
     `${__dirname}/dev-data/data/tours-simple.json`,
     JSON.stringify(updatedTours),
-    (err) => {
+    () => {
       res.status(200).json({
         status: 'success',
         data: {
@@ -97,14 +97,14 @@ exports.updateTour = (req, res) => {
 };
 
 exports.deleteTour = (req, res) => {
-  const id = parseInt(req.params.id);
+  const id = parseInt(req.params.id, 10);
 
   const updatedTours = tours.filter((tour) => tour.id !== id);
 
   fs.writeFile(
     `${__dirname}/dev-data/data/tours-simple.json`,
     JSON.stringify(updatedTours),
-    (err) => {
+    () => {
       res.status(204).json({
         status: 'success',
         data: null,
