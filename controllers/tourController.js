@@ -44,7 +44,7 @@ exports.getAllTours = (req, res) => {
 exports.getTour = (req, res) => {
   const id = parseInt(req.params.id); // 123abc -> 123
 
-  const tour = tours.find((tour) => tour.id === id);
+  const tour = tours.find((el) => el.id === id);
 
   res.status(200).json({
     status: 'success',
@@ -56,7 +56,7 @@ exports.getTour = (req, res) => {
 
 exports.createTour = (req, res) => {
   const newId = tours[tours.length - 1].id + 1;
-  const newTour = Object.assign({ id: newId }, req.body);
+  const newTour = { ...req.body, id: newId };
   tours.push(newTour);
 
   fs.writeFile(
