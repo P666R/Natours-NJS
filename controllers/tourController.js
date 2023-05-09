@@ -3,9 +3,22 @@ const Tour = require('../models/tourModel');
 // route handlers
 exports.getAllTours = async (req, res) => {
   try {
+    console.log(req.query);
+
     //  build query
+    // 1. filtering
     const filters = { ...req.query };
-    const query = Tour.find(filters);
+
+    // 2. advanced filtering
+    let queryStr = JSON.stringify(filters);
+    queryStr = queryStr.replace(/\b(gte?|lte?)\b/g, (match) => `$${match}`);
+    console.log(JSON.parse(queryStr));
+
+    // {difficulty: 'easy', duration: {$gte:5}}
+    // { difficulty: 'easy', duration: { gte: '5' } }
+    // gte, gt, lte, lt
+
+    const query = Tour.find(JSON.parse(queryStr));
 
     // execute query
     const tours = await query;
