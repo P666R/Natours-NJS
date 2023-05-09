@@ -3,22 +3,26 @@ const Tour = require('../models/tourModel');
 // route handlers
 exports.getAllTours = async (req, res) => {
   try {
-    console.log(req.query);
-
     //  build query
-    // 1. filtering
-    const filters = { ...req.query };
 
-    // 2. advanced filtering
+    // 1a. filtering (with fields value pairs excluding fields in the string query not part of the schema)
+    // just set strictQuery: true in schema, so non schema properties are removed from filter
+
+    // 1b. advanced filtering (with operators eg gte,lte)
+    const filters = { ...req.query };
     let queryStr = JSON.stringify(filters);
     queryStr = queryStr.replace(/\b(gte?|lte?)\b/g, (match) => `$${match}`);
-    console.log(JSON.parse(queryStr));
 
-    // {difficulty: 'easy', duration: {$gte:5}}
-    // { difficulty: 'easy', duration: { gte: '5' } }
-    // gte, gt, lte, lt
+    let query = Tour.find(JSON.parse(queryStr));
 
-    const query = Tour.find(JSON.parse(queryStr));
+    // 2. sorting (based on 1 or more fields)
+    if (req.query.sort) {
+      // query = query.sort(req.query.sort);
+      const sortBy = req.query.sort.split(',').join(' ');
+      query = query.sort(sortBy);
+    } else {
+      query = query.sort('-createdAt');
+    }
 
     // execute query
     const tours = await query;
