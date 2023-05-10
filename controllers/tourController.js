@@ -1,5 +1,13 @@
 const Tour = require('../models/tourModel');
 
+// midddleware
+exports.aliasTopTours = (req, res, next) => {
+  req.query.limit = '5';
+  req.query.sort = '-ratingsAverage,price';
+  req.query.fields = 'name,price,ratingsAverage,price,summary,difficulty';
+  next();
+};
+
 // route handlers
 exports.getAllTours = async (req, res) => {
   try {
