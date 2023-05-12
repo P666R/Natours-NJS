@@ -1,6 +1,7 @@
 const Tour = require('../models/tourModel');
+const APIFeatures = require('../utils/apiFeatures');
 
-// midddleware
+// middleware
 exports.aliasTopTours = (req, res, next) => {
   req.query.limit = '5';
   req.query.sort = '-ratingsAverage,price';
@@ -11,49 +12,14 @@ exports.aliasTopTours = (req, res, next) => {
 // route handlers
 exports.getAllTours = async (req, res) => {
   try {
-    //  build query
-
-    // 1a. filtering (with fields value pairs excluding fields in the string query not part of the schema)
-    // just set strictQuery: true in schema, so non schema properties are removed from filter
-
-    // 1b. advanced filtering (with operators eg gte,lte)
-    const filters = { ...req.query };
-    let queryStr = JSON.stringify(filters);
-    queryStr = queryStr.replace(/\b(gte?|lte?)\b/g, (match) => `$${match}`);
-
-    let query = Tour.find(JSON.parse(queryStr));
-
-    // 2. sorting (based on 1 or more fields)
-    if (req.query.sort) {
-      // query = query.sort(req.query.sort);
-      const sortBy = req.query.sort.split(',').join(' ');
-      query = query.sort(sortBy);
-    } else {
-      query = query.sort('-createdAt _id');
-    }
-
-    // 3. field limiting
-    if (req.query.fields) {
-      const fields = req.query.fields.split(',').join(' ');
-      query = query.select(fields);
-    } else {
-      query = query.select('-__v');
-    }
-
-    // 4. pagination
-    const page = req.query.page * 1 || 1;
-    const limit = req.query.limit * 1 || 100;
-    const skip = (page - 1) * limit;
-
-    query = query.skip(skip).limit(limit);
-
-    if (req.query.page) {
-      const numTours = await Tour.countDocuments();
-      if (skip >= numTours) throw new Error('This page does not exist');
-    }
-
     // execute query
-    const tours = await query;
+    const features = new APIFeatures(Tour.find(), req.query)
+      .filter()
+      .sort()
+      .limitFields()
+      .paginate();
+
+    const tours = await features.query;
 
     // send response
     res.status(200).json({
