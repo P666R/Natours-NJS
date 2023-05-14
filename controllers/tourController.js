@@ -174,6 +174,30 @@ exports.getMonthlyPlan = async (req, res) => {
       {
         $addFields: { month: '$_id' },
       },
+      // {
+      //   $addFields: {
+      //     month: {
+      //       $arrayElemAt: [
+      //         [
+      //           '',
+      //           'Jan',
+      //           'Feb',
+      //           'Mar',
+      //           'Apr',
+      //           'May',
+      //           'Jun',
+      //           'Jul',
+      //           'Aug',
+      //           'Sep',
+      //           'Oct',
+      //           'Nov',
+      //           'Dec',
+      //         ],
+      //         '$_id',
+      //       ],
+      //     },
+      //   },
+      // },
       {
         $project: {
           _id: 0,
