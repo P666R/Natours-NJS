@@ -11,7 +11,12 @@ const tourSchema = new mongoose.Schema(
       trim: true,
       maxlength: [40, 'A tour name must have <= 40 characters'],
       minlength: [10, 'A tour name must have >= 10 characters'],
-      // validate: [validator.isAlpha, 'Tour names must only contain characters'],
+      validate: {
+        validator: function (val) {
+          return validator.isAlpha(val, ['en-US'], { ignore: ' ' });
+        },
+        message: 'Tour names must only contain characters',
+      },
     },
     slug: String,
     duration: {
@@ -47,9 +52,6 @@ const tourSchema = new mongoose.Schema(
     },
     priceDiscount: {
       type: Number,
-      // validate: function (val) {
-      //   return val < this.price;
-      // },
       validate: {
         validator: function (val) {
           // this only points to current doc on NEW doc creation, not update
