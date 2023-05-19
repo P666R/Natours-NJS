@@ -36,12 +36,12 @@ const sendErrorProd = (err, res) => {
     // programming or other unknown error: don't leak details to client
   } else {
     //  1. log the error
-    console.error('Error', err);
+    console.error('Error!', { ...err });
 
     //  2. send the generic message
     res.status(500).json({
       status: 'error',
-      message: 'Something went wrong',
+      message: 'Something went very wrong',
     });
   }
 };
