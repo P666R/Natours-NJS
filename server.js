@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const http = require('http');
 const dotenv = require('dotenv');
 
 // globally handle any uncaught exceptions
@@ -20,8 +21,7 @@ const DB = process.env.DATABASE.replace(
 
 const port = process.env.PORT || 3000;
 
-const server = () =>
-  app.listen(port, () => console.log(`App running on port ${port}...`));
+const server = http.createServer(app);
 
 const start = async () => {
   try {
@@ -29,8 +29,8 @@ const start = async () => {
     await mongoose
       .connect(DB)
       .then(() => console.log('DB connection successful'));
-    // starting the server
-    server();
+    // start server
+    server.listen(port, () => console.log(`App running on port ${port}...`));
     // catch any error on attempt to connect to DB
   } catch (error) {
     console.log(error.name, error.message);
@@ -41,7 +41,7 @@ const start = async () => {
 process.on('unhandledRejection', (err) => {
   console.log('Unhandled rejection! Shutting down...');
   console.log(err.name, err.message);
-  server().close(() => {
+  server.close(() => {
     process.exit(1);
   });
 });
