@@ -34,7 +34,7 @@ const userSchema = new mongoose.Schema({
 });
 
 userSchema.pre('save', async function (next) {
-  // run this function if password was actually modified
+  // run this function only if password was actually modified
   if (!this.isModified('password')) return next();
 
   //  has the password with cost of 12
