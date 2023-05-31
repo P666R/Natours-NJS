@@ -104,6 +104,22 @@ exports.restrictTo =
     next();
   };
 
+exports.forgotPassword = catchAsync(async (req, res, next) => {
+  // 1. get user based on POSTed email
+  const user = await User.findOne({ email: req.body.email });
+  if (!user) {
+    return next(new AppError('There is no user with that email address', 404));
+  }
+  // 2. generate the random reset token
+  const resetToken = user.createPasswordResetToken();
+  // await user.save({ validateBeforeSave: false });
+  await user.save({ validateModifiedOnly: true });
+
+  // 3. send it to users email
+});
+
+exports.resetPassword = (req, res, next) => {};
+
 /* to generate secret key for jwt token in console
  node -e "console.log(require('crypto').randomBytes(64).toString('hex'));"*/
 
