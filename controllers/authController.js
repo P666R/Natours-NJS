@@ -82,6 +82,7 @@ exports.protect = catchAsync(async (req, res, next) => {
       new AppError('The user belonging to this token does not exist', 401)
     );
   }
+
   // 4. check if user changed password after the token was issued
   if (currentUser.changedPasswordAfter(decoded.iat)) {
     return next(
@@ -183,21 +184,4 @@ exports.resetPassword = catchAsync(async (req, res, next) => {
 /* to generate secret key for jwt token in console
  node -e "console.log(require('crypto').randomBytes(64).toString('hex'));"*/
 
-/*
-// async version for jwt token generation
-const signToken = (id) =>
-  new Promise((resolve, reject) => {
-    jwt.sign(
-      { id },
-      process.env.JWT_SECRET,
-      { expiresIn: process.env.JWT_EXPIRES_IN },
-      (err, token) => {
-        if (err) {
-          reject(err);
-        } else {
-          resolve(token);
-        }
-      }
-    );
-  });
-  */
+// for async version of signToken use node promisify
