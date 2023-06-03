@@ -28,16 +28,22 @@ exports.updateMe = catchAsync(async (req, res, next) => {
   if (req.body.password || req.body.passwordConfirm) {
     return next(
       new AppError(
-        'This route is not for password updates, Please use /updateMypassword',
+        'This route is not for password updates, Please use /updateMyPassword',
         400
       )
     );
   }
 
-  // 2. filtered out unwanted field names that are not allowed to be updated
+  // 2. filter out unwanted field names that are not allowed to be updated
   const filteredBody = filterObj(req.body, 'name', 'email');
 
   // 3. update user document
+
+  /*
+  const updatedUser = Object.assign(req.user, filteredBody);
+  await updatedUser.save({ validateModifiedOnly: true });
+*/
+
   const updatedUser = await User.findByIdAndUpdate(req.user.id, filteredBody, {
     new: true,
     runValidators: true,
