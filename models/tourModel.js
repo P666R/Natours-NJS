@@ -87,7 +87,7 @@ const tourSchema = new mongoose.Schema(
       default: false,
     },
     startLocation: {
-      // GeoJASON
+      // GeoJSON
       type: {
         type: String,
         default: 'Point',
@@ -130,10 +130,18 @@ tourSchema.pre('save', function (next) {
   next();
 });
 
+/*
 tourSchema.pre('save', async function (next) {
   const guidesPromises = this.guides.map(async (id) => await User.findById(id));
 
   this.guides = await Promise.all(guidesPromises);
+  next();
+});
+*/
+
+tourSchema.pre('save', async function (next) {
+  const ids = this.guides;
+  this.guides = await User.find({ _id: { $in: ids } });
   next();
 });
 
