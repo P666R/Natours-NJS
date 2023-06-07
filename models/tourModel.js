@@ -1,6 +1,6 @@
 const mongoose = require('mongoose');
 const slugify = require('slugify');
-const User = require('./userModel');
+// const User = require('./userModel');
 // const validator = require('validator');
 
 const tourSchema = new mongoose.Schema(
@@ -110,7 +110,12 @@ const tourSchema = new mongoose.Schema(
         day: Number,
       },
     ],
-    guides: Array,
+    guides: [
+      {
+        type: mongoose.Schema.ObjectId,
+        ref: 'User',
+      },
+    ],
   },
   {
     strictQuery: true,
@@ -137,13 +142,15 @@ tourSchema.pre('save', async function (next) {
   this.guides = await Promise.all(guidesPromises);
   next();
 });
-*/
+
+// or
 
 tourSchema.pre('save', async function (next) {
   const ids = this.guides;
   this.guides = await User.find({ _id: { $in: ids } });
   next();
 });
+*/
 
 // query middleware
 // tourSchema.pre('find', function (next) {
