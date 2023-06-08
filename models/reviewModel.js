@@ -8,9 +8,8 @@ const reviewSchema = new mongoose.Schema(
     },
     rating: {
       type: Number,
-      default: 0,
-      min: [1, 'Rating must be above 0'],
-      max: [5, 'Rating must be below 6'],
+      min: 1,
+      max: 5,
     },
     createdAt: {
       type: Date,
