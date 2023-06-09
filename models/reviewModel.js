@@ -30,15 +30,24 @@ const reviewSchema = new mongoose.Schema(
     strictQuery: true,
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
+    id: false,
   }
 );
 
 // query middlewares
 reviewSchema.pre(/^find/, function (next) {
+  /*
   this.populate({
     path: 'tour',
     select: 'name',
   }).populate({
+    path: 'user',
+    select: 'name photo',
+  });
+  // .lean();
+  // using lean() results in POJOs so without virtuals, setters etc (removes guides, durationWeeks)
+*/
+  this.populate({
     path: 'user',
     select: 'name photo',
   });

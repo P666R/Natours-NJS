@@ -129,6 +129,13 @@ tourSchema.virtual('durationWeeks').get(function () {
   return this.duration / 7;
 });
 
+// virtual populate
+tourSchema.virtual('reviews', {
+  ref: 'Review', // name of the model that we want to refence
+  foreignField: 'tour', // name of the field in the other model where the refence of the current model is stored
+  localField: '_id', // where the refenced id is stored here in this current model
+});
+
 // document middleware runs before .save() and .create()
 tourSchema.pre('save', function (next) {
   this.slug = slugify(this.name, { lower: true });
@@ -160,6 +167,7 @@ tourSchema.pre(/^find/, function (next) {
   next();
 });
 
+// note: this leads to creation of guides field while running query MW in reviews model, best implement populate in tour controller
 tourSchema.pre(/^find/, function (next) {
   this.populate({
     path: 'guides',
