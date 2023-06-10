@@ -160,14 +160,12 @@ tourSchema.pre('save', async function (next) {
 */
 
 // query middleware
-// tourSchema.pre('find', function (next) {
 tourSchema.pre(/^find/, function (next) {
   this.find({ secretTour: { $ne: true } });
   this.start = Date.now();
   next();
 });
 
-// note: this leads to creation of guides field while running query MW in reviews model, best implement populate in tour controller
 tourSchema.pre(/^find/, function (next) {
   this.populate({
     path: 'guides',
