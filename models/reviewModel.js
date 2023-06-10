@@ -44,8 +44,6 @@ reviewSchema.pre(/^find/, function (next) {
     path: 'user',
     select: 'name photo',
   });
-  // .lean();
-  // using lean() results in POJOs so without virtuals, setters etc (removes guides, durationWeeks)
 */
   this.populate({
     path: 'user',

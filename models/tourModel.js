@@ -131,9 +131,9 @@ tourSchema.virtual('durationWeeks').get(function () {
 
 // virtual populate
 tourSchema.virtual('reviews', {
-  ref: 'Review', // name of the model that we want to refence
-  foreignField: 'tour', // name of the field in the other model where the refence of the current model is stored
-  localField: '_id', // where the refenced id is stored here in this current model
+  ref: 'Review',
+  foreignField: 'tour',
+  localField: '_id',
 });
 
 // document middleware runs before .save() and .create()
