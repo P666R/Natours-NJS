@@ -24,7 +24,12 @@ class APIFeatures {
 
   limitFields() {
     if (this.queryString.fields) {
-      const fields = this.queryString.fields.split(',').join(' ');
+      // if password present, removed it so that it doesnt show up in follow on query
+      const fields = this.queryString.fields
+        .split(',')
+        .filter((field) => field.trim().toLowerCase() !== 'password')
+        .join(' ');
+
       this.query = this.query.select(fields);
     } else {
       this.query = this.query.select('-__v');
