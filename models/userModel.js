@@ -50,7 +50,6 @@ const userSchema = new mongoose.Schema(
   },
   {
     strictQuery: true,
-    id: false,
   }
 );
 
