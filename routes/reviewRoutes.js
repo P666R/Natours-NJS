@@ -4,15 +4,12 @@ const authController = require('../controllers/authController');
 
 const router = express.Router({ mergeParams: true });
 
-// POST /tour/23ere4tt4/reviews
-// GET /tour/23ere4tt4/reviews
-// POST /reviews
+router.use(authController.protect);
 
 router
   .route('/')
   .get(reviewcontroller.getAllReviews)
   .post(
-    authController.protect,
     authController.restrictTo('user'),
     reviewcontroller.setTourUserIds,
     reviewcontroller.createReview
@@ -21,7 +18,13 @@ router
 router
   .route('/:id')
   .get(reviewcontroller.getReview)
-  .patch(reviewcontroller.updateReview)
-  .delete(reviewcontroller.deleteReview);
+  .patch(
+    authController.restrictTo('user', 'admin'),
+    reviewcontroller.updateReview
+  )
+  .delete(
+    authController.restrictTo('user', 'admin'),
+    reviewcontroller.deleteReview
+  );
 
 module.exports = router;
