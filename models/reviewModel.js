@@ -30,7 +30,6 @@ const reviewSchema = new mongoose.Schema(
     strictQuery: true,
     toJSON: { virtuals: true },
     toObject: { virtuals: true },
-    id: false,
   }
 );
 
