@@ -4,8 +4,26 @@ const APIFeatures = require('../utils/apiFeatures');
 
 const nameModel = (Model) => Model.modelName.toLowerCase();
 
-exports.deleteOne = (Model) =>
+exports.deleteOne = (Model, idField) =>
   catchAsync(async (req, res, next) => {
+    if (idField && req.user.role === 'user') {
+      const doc = await Model.findOneAndDelete({
+        _id: req.params.id,
+        [idField]: req.user.id,
+      });
+
+      if (!doc)
+        return next(
+          new AppError(`Invalid ${nameModel(Model)} ID / forbidden`, 403)
+        );
+
+      res.status(204).json({
+        status: 'success',
+        data: null,
+      });
+      return;
+    }
+
     const doc = await Model.findByIdAndDelete(req.params.id);
 
     if (!doc) {
@@ -20,8 +38,35 @@ exports.deleteOne = (Model) =>
     });
   });
 
-exports.updateOne = (Model) =>
+exports.updateOne = (Model, idField) =>
   catchAsync(async (req, res, next) => {
+    if (idField && req.user.role === 'user') {
+      const doc = await Model.findOneAndUpdate(
+        {
+          _id: req.params.id,
+          [idField]: req.user.id,
+        },
+        req.body,
+        {
+          returnDocument: 'after',
+          runValidators: true,
+        }
+      );
+
+      if (!doc)
+        return next(
+          new AppError(`Invalid ${nameModel(Model)} ID / forbidden`, 403)
+        );
+
+      res.status(200).json({
+        status: 'success',
+        data: {
+          [`${nameModel(Model)}`]: doc,
+        },
+      });
+      return;
+    }
+
     const doc = await Model.findByIdAndUpdate(req.params.id, req.body, {
       new: true,
       runValidators: true,
