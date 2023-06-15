@@ -29,9 +29,6 @@ exports.getTourStats = catchAsync(async (req, res, next) => {
     },
     {
       $group: {
-        // _id: null,
-        // _id: '$ratingsAverage',
-        // _id: '$difficulty',
         _id: { $toUpper: '$difficulty' },
         numTours: { $sum: 1 },
         numRatings: { $sum: '$ratingsQuantity' },
@@ -44,9 +41,6 @@ exports.getTourStats = catchAsync(async (req, res, next) => {
     {
       $sort: { avgPrice: 1 },
     },
-    // {
-    // $match: { _id: { $ne: 'EASY' } },
-    // },
   ]);
 
   res.status(200).json({
@@ -82,30 +76,6 @@ exports.getMonthlyPlan = catchAsync(async (req, res, next) => {
     {
       $addFields: { month: '$_id' },
     },
-    // {
-    //   $addFields: {
-    //     month: {
-    //       $arrayElemAt: [
-    //         [
-    //           '',
-    //           'Jan',
-    //           'Feb',
-    //           'Mar',
-    //           'Apr',
-    //           'May',
-    //           'Jun',
-    //           'Jul',
-    //           'Aug',
-    //           'Sep',
-    //           'Oct',
-    //           'Nov',
-    //           'Dec',
-    //         ],
-    //         '$_id',
-    //       ],
-    //     },
-    //   },
-    // },
     {
       $project: {
         _id: 0,
