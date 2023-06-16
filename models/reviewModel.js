@@ -54,31 +54,56 @@ reviewSchema.pre(/^find/, function (next) {
 });
 
 reviewSchema.statics.calcAverageRatings = async function (tourId) {
-  const stats = await this.aggregate([
+  const [stats] = await this.aggregate([
     {
-      $match: { tour: tourId },
+      $match: { tour: { $eq: tourId } },
     },
     {
       $group: {
-        _id: '$tour',
-        nRating: { $sum: 1 },
-        avgRating: { $avg: '$rating' },
+        _id: null,
+        ratingsQuantity: { $sum: 1 },
+        ratingsAverage: { $avg: '$rating' },
       },
+    },
+    {
+      $project: { _id: 0 },
     },
   ]);
 
-  // console.log(stats);
-
-  await Tour.findByIdAndUpdate(tourId, {
-    ratingsQuantity: stats[0].nRating,
-    ratingsAverage: stats[0].avgRating,
-  });
+  if (stats) {
+    await Tour.findByIdAndUpdate(tourId, stats);
+  } else {
+    await Tour.findByIdAndUpdate(tourId, {
+      ratingsQuantity: 0,
+      ratingsAverage: 4.5,
+    });
+  }
 };
 
 reviewSchema.post('save', function () {
-  //  this points to current review
+  //  this points to current review document
 
   this.constructor.calcAverageRatings(this.tour);
+});
+
+// findByIdAndUpdate
+// findByIdAndDelete
+
+/*
+reviewSchema.pre(/^findOneAnd/, async function (next) {
+  this.r = await this.clone().findOne();
+  // console.log(this.r);
+  next();
+});
+
+reviewSchema.post(/^findOneAnd/, async function () {
+  // await this.findOne() doesnt work here query has already executed
+  await this.r.constructor.calcAverageRatings(this.r.tour);
+});
+*/
+
+reviewSchema.post(/^findOneAnd/, async function (doc) {
+  if (doc) await this.model.calcAverageRatings(doc.tour);
 });
 
 const Review = mongoose.model('Review', reviewSchema);
