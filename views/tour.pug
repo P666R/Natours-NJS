@@ -2,7 +2,9 @@ extends base
 include _reviewCard
 
 block append head
-    //- script(src='/js/mapbox.js')
+    link(rel='stylesheet' href='https://unpkg.com/leaflet@1.9.4/dist/leaflet.css')
+    script(src='https://unpkg.com/leaflet@1.9.4/dist/leaflet.js')
+    script(defer src='/js/leaflet.js')
 
 mixin overviewBox(label, text, icon)
     .overview-box__detail
