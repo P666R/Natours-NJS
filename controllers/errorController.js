@@ -22,34 +22,57 @@ const handleJWTError = () =>
 const handleJWTExpiredError = () =>
   new AppError(`Your token has expired, Please log in again`, 401);
 
-const sendErrorDev = (err, res) => {
-  res.status(err.statusCode).json({
-    status: err.status,
-    error: err,
-    message: err.message,
-    stack: err.stack,
+const sendErrorDev = (err, req, res) => {
+  // Handle errors for API requests
+  if (req.originalUrl.startsWith('/api')) {
+    return res.status(err.statusCode).json({
+      status: err.status,
+      error: err,
+      message: err.message,
+      stack: err.stack,
+    });
+  }
+
+  // Handle errors for rendered website
+  console.error('ERROR 💥', { ...err });
+  return res.status(err.statusCode).render('error', {
+    title: 'Something went wrong!',
+    msg: err.message,
   });
 };
 
-const sendErrorProd = (err, res) => {
-  // operational, trusted error: send message to client
-  if (err.isOperational) {
-    res.status(err.statusCode).json({
-      status: err.status,
-      message: err.message,
-    });
-
-    // programming or other unknown error: don't leak details to client
-  } else {
-    //  1. log the error
-    console.error('Error!', { ...err });
-
-    //  2. send the generic message
-    res.status(500).json({
+const sendErrorProd = (err, req, res) => {
+  // Handle API errors
+  if (req.originalUrl.startsWith('/api')) {
+    // Send operational error message to client
+    if (err.isOperational) {
+      return res.status(err.statusCode).json({
+        status: err.status,
+        message: err.message,
+      });
+    }
+    // Log and send generic error message for programming or unknown errors
+    console.error('Error 💥', { ...err });
+    return res.status(500).json({
       status: 'error',
       message: 'Something went very wrong',
     });
   }
+
+  // Handle rendered website errors
+  if (err.isOperational) {
+    // Send operational error message to client
+    return res.status(err.statusCode).render('error', {
+      title: 'Something went wrong!',
+      msg: err.message,
+    });
+  }
+  // Log and send generic error message for programming or unknown errors
+  console.error('Error 💥', { ...err });
+  return res.status(err.statusCode).render('error', {
+    title: 'Something went wrong!',
+    msg: 'Please try again later',
+  });
 };
 
 module.exports = (err, req, res, next) => {
@@ -57,7 +80,7 @@ module.exports = (err, req, res, next) => {
   err.status = err.status || 'error';
 
   if (process.env.NODE_ENV === 'development') {
-    sendErrorDev(err, res);
+    sendErrorDev(err, req, res);
   } else if (process.env.NODE_ENV === 'production') {
     if (err.name === 'CastError')
       return sendErrorProd(handleCastErrorDB(err), res);
@@ -74,6 +97,6 @@ module.exports = (err, req, res, next) => {
     if (err.name === 'TokenExpiredError')
       return sendErrorProd(handleJWTExpiredError(), res);
 
-    sendErrorProd(err, res);
+    sendErrorProd(err, req, res);
   }
 };
