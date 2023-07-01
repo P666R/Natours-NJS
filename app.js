@@ -34,7 +34,7 @@ const scriptSrcUrls = [
   'https://unpkg.com/',
   'https://tile.openstreetmap.org',
   'https://*.cloudflare.com/',
-  'https://cdnjs.cloudflare.com/ajax/libs/axios/',
+  'https://cdnjs.cloudflare.com/ajax/libs/axios/1.4.0/axios.min.js',
 ];
 const styleSrcUrls = [
   'https://unpkg.com/',
@@ -45,6 +45,8 @@ const connectSrcUrls = [
   'https://unpkg.com',
   'https://tile.openstreetmap.org',
   'https://*.cloudflare.com/',
+  'https://bundle.js:*',
+  'ws://localhost:*/',
 ];
 const fontSrcUrls = ['fonts.googleapis.com', 'fonts.gstatic.com'];
 

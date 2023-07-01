@@ -1,46 +1,51 @@
 /* eslint-disable */
 
-console.log('hello from client side');
-// Get locations from HTML
-const locations = JSON.parse(document.getElementById('map').dataset.locations);
+export const displayMap = (locations) => {
+  // Create a Leaflet map instance with the id 'map' and disable the zoom control
+  const map = L.map('map', { zoomControl: false });
 
-// Create the map and attach it to the #map
-var map = L.map('map', { zoomControl: false });
+  // Add a tile layer to the map using OpenStreetMap as the source
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution:
+      '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+  }).addTo(map);
 
-// Add a tile layer to add to our map
-L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-  attribution:
-    '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-}).addTo(map);
+  // Create a custom icon for the markers on the map
+  const greenIcon = L.icon({
+    iconUrl: '/img/pin.png',
+    iconSize: [32, 40],
+    iconAnchor: [16, 45],
+    popupAnchor: [0, -50],
+  });
 
-// Create icon as per the image provided (css .marker)
-var greenIcon = L.icon({
-  iconUrl: '/img/pin.png',
-  iconSize: [32, 40], // size of the icon
-  iconAnchor: [16, 45], // point of the icon which will correspond to marker's location
-  popupAnchor: [0, -50], // point from which the popup should open relative to the iconAnchor
-});
+  // Create an array to store the points (coordinates) of the locations
+  const points = [];
 
-// Add locations to the map
-const points = [];
-locations.forEach((loc) => {
-  // Create points
-  points.push([loc.coordinates[1], loc.coordinates[0]]);
+  // Loop through each location in the 'locations' array
+  locations.forEach((loc) => {
+    // Add the coordinates of the location to the 'points' array
+    points.push([loc.coordinates[1], loc.coordinates[0]]);
 
-  // Add markers
-  L.marker([loc.coordinates[1], loc.coordinates[0]], { icon: greenIcon })
-    .addTo(map)
-    // Add popup
-    .bindPopup(`<p>Day ${loc.day}: ${loc.description}</p>`, {
-      autoClose: false,
-      className: 'mapPopup',
-    })
-    .openPopup();
-});
+    // Create a marker at the location's coordinates with the greenIcon
+    const marker = L.marker([loc.coordinates[1], loc.coordinates[0]], {
+      icon: greenIcon,
+    }).addTo(map);
 
-// Set map bounds to include current location
-const bounds = L.latLngBounds(points).pad(0.5);
-map.fitBounds(bounds);
+    // Bind a popup to the marker with the location's details
+    marker
+      .bindPopup(`<p>Day ${loc.day}: ${loc.description}</p>`, {
+        autoClose: false,
+        className: 'mapPopup',
+      })
+      .openPopup();
+  });
 
-// Disable scroll on map
-map.scrollWheelZoom.disable();
+  // Create bounds based on the points and adjust the padding
+  const bounds = L.latLngBounds(points).pad(0.5);
+
+  // Fit the map to the bounds
+  map.fitBounds(bounds);
+
+  // Disable scroll wheel zoom on the map
+  map.scrollWheelZoom.disable();
+};
