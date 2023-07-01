@@ -71,6 +71,11 @@ exports.login = catchAsync(async (req, res, next) => {
   createSendToken(user, 200, res);
 });
 
+exports.logout = (req, res) => {
+  res.clearCookie('jwt');
+  res.status(200).json({ status: 'success' });
+};
+
 exports.protect = catchAsync(async (req, res, next) => {
   // 1. get token and check if it exists
   let token;
@@ -113,6 +118,8 @@ exports.protect = catchAsync(async (req, res, next) => {
 
 // only for rendered pages, no errors
 exports.isLoggedIn = catchAsync(async (req, res, next) => {
+  if (req.cookies.jwt === null) return next();
+
   if (req.cookies.jwt) {
     // 1. verify the token
     const decoded = await promisify(jwt.verify)(
