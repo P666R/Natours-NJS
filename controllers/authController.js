@@ -89,6 +89,9 @@ exports.protect = catchAsync(async (req, res, next) => {
   }
 
   if (!token) {
+    if (req.originalUrl.startsWith('/me')) {
+      return res.redirect('/');
+    }
     return next(
       new AppError('You are not logged in, please log in to get access', 401)
     );
@@ -113,6 +116,7 @@ exports.protect = catchAsync(async (req, res, next) => {
 
   // grant access to protected route
   req.user = currentUser;
+  res.locals.user = currentUser;
   next();
 });
 
