@@ -25,6 +25,7 @@
   },
   "homepage": "https://github.com/P666R/Natours-NJS#readme",
   "dependencies": {
+    "@swc/helpers": "^0.5.1",
     "bcryptjs": "^2.4.3",
     "cookie-parser": "^1.4.6",
     "core-js": "^3.31.0",
