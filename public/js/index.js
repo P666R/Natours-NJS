@@ -8,7 +8,7 @@ import { login, logout } from './login.js';
 
 // dom elements
 const leaflet = document.getElementById('map');
-const loginForm = document.querySelector('.form');
+const loginForm = document.querySelector('.form--login');
 const logoutBtn = document.querySelector('.nav__el--logout');
 
 // delegation

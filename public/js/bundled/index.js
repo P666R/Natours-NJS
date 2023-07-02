@@ -334,7 +334,7 @@ var _leafletJs = require("./leaflet.js");
 var _loginJs = require("./login.js");
 // dom elements
 var leaflet = document.getElementById("map");
-var loginForm = document.querySelector(".form");
+var loginForm = document.querySelector(".form--login");
 var logoutBtn = document.querySelector(".nav__el--logout");
 // delegation
 if (leaflet) {
