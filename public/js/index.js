@@ -5,11 +5,13 @@ import 'regenerator-runtime/runtime';
 
 import { displayMap } from './leaflet.js';
 import { login, logout } from './login.js';
+import { updateData } from './updateSettings.js';
 
 // dom elements
 const leaflet = document.getElementById('map');
 const loginForm = document.querySelector('.form--login');
 const logoutBtn = document.querySelector('.nav__el--logout');
+const userDataForm = document.querySelector('.form-user-data');
 
 // delegation
 if (leaflet) {
@@ -27,3 +29,12 @@ if (loginForm) {
 }
 
 if (logoutBtn) logoutBtn.addEventListener('click', logout);
+
+if (userDataForm) {
+  addEventListener('submit', (e) => {
+    e.preventDefault();
+    const name = document.getElementById('name').value;
+    const email = document.getElementById('email').value;
+    updateData(name, email);
+  });
+}
