@@ -355,12 +355,12 @@ if (loginForm) loginForm.addEventListener("submit", function(e) {
 if (logoutBtn) logoutBtn.addEventListener("click", (0, _loginJs.logout));
 if (userDataForm) userDataForm.addEventListener("submit", function(e) {
     e.preventDefault();
-    var name = document.getElementById("name").value;
-    var email = document.getElementById("email").value;
-    (0, _updateSettingsJs.updateSettings)({
-        name: name,
-        email: email
-    }, "data");
+    var form = new FormData();
+    form.append("name", document.getElementById("name").value);
+    form.append("email", document.getElementById("email").value);
+    form.append("photo", document.getElementById("photo").files[0]);
+    console.log(form);
+    (0, _updateSettingsJs.updateSettings)(form, "data");
 });
 if (userPasswordForm) userPasswordForm.addEventListener("submit", function() {
     var _ref = (0, _asyncToGenerator._)(function(e) {
