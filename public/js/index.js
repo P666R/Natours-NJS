@@ -62,15 +62,19 @@ if (userPasswordForm) {
   });
 }
 
-const userImgEl = document.querySelector('.form__user-photo');
-const userImgInputEl = document.querySelector('#photo');
+const accountFileInput = userDataForm.querySelector('.form__upload');
+const img = userDataForm.querySelector('.form__user-photo');
 
-const handleDisplayUserPhoto = (e) => {
-  const imgFile = e.target.files?.[0];
+// display user photo before upload
+if (accountFileInput) {
+  userDataForm.addEventListener('change', (e) => {
+    const file = accountFileInput.files[0];
+    if (!file) return;
 
-  if (!imgFile?.type.startsWith('image/')) return;
+    img.src = URL.createObjectURL(file);
 
-  userImgEl.src = URL.createObjectURL(imgFile);
-};
-
-userImgInputEl.addEventListener('change', handleDisplayUserPhoto);
+    img.onload = function () {
+      URL.revokeObjectURL(this.src);
+    };
+  });
+}
