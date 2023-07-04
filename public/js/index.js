@@ -38,7 +38,6 @@ if (userDataForm) {
     form.append('name', document.getElementById('name').value);
     form.append('email', document.getElementById('email').value);
     form.append('photo', document.getElementById('photo').files[0]);
-    console.log(form);
     updateSettings(form, 'data');
   });
 }
@@ -62,3 +61,16 @@ if (userPasswordForm) {
     document.getElementById('password-confirm').value = '';
   });
 }
+
+const userImgEl = document.querySelector('.form__user-photo');
+const userImgInputEl = document.querySelector('#photo');
+
+const handleDisplayUserPhoto = (e) => {
+  const imgFile = e.target.files?.[0];
+
+  if (!imgFile?.type.startsWith('image/')) return;
+
+  userImgEl.src = URL.createObjectURL(imgFile);
+};
+
+userImgInputEl.addEventListener('change', handleDisplayUserPhoto);
