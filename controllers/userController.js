@@ -1,11 +1,10 @@
 const multer = require('multer');
 const sharp = require('sharp');
-const fs = require('fs');
-const util = require('util');
 const User = require('../models/userModel');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 const factory = require('./handlerFactory');
+const utilRemove = require('../utils/removeOldFiles');
 
 /*
 const multerStorage = multer.diskStorage({
@@ -50,19 +49,6 @@ exports.resizeUserPhoto = catchAsync(async (req, res, next) => {
   next();
 });
 
-const deleteUserPhotoServer = async (photo) => {
-  if (photo.startsWith('default')) return;
-
-  const path = `${__dirname}/../public/img/users/${photo}`;
-  const unlink = util.promisify(fs.unlink);
-
-  try {
-    await unlink(path);
-  } catch (error) {
-    console.log(error);
-  }
-};
-
 const filterObj = (obj, ...allowedFields) => {
   const newObj = {};
   Object.keys(obj).forEach((el) => {
@@ -93,7 +79,7 @@ exports.updateMe = catchAsync(async (req, res, next) => {
   if (req.file) filteredBody.photo = req.file.filename;
 
   // delete the old photo in the server
-  if (req.file) await deleteUserPhotoServer(req.user.photo);
+  if (req.file) await utilRemove.removeOldUserPhoto(req.user.photo);
 
   // 3. update user document
 

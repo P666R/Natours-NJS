@@ -4,6 +4,7 @@ const Tour = require('../models/tourModel');
 const AppError = require('../utils/appError');
 const catchAsync = require('../utils/catchAsync');
 const factory = require('./handlerFactory');
+const utilRemove = require('../utils/removeOldFiles');
 
 const multerStorage = multer.memoryStorage();
 
@@ -26,33 +27,49 @@ exports.uploadTourImages = upload.fields([
 ]);
 
 exports.resizeTourImages = catchAsync(async (req, res, next) => {
-  if (!req.files.imageCover || !req.files.images) return next();
+  const { imageCover, images } = req.files;
 
-  // 1. cover image
-  req.body.imageCover = `tour-${req.params.id}-${Date.now()}-cover.jpeg`;
+  if (!imageCover && !images) {
+    return next();
+  }
 
-  await sharp(req.files.imageCover[0].buffer)
-    .resize(2000, 1333)
-    .toFormat('jpeg')
-    .jpeg({ quality: 90 })
-    .toFile(`public/img/tours/${req.body.imageCover}`);
+  const tour = await Tour.findById(req.params.id);
 
-  //  2. images
-  req.body.images = [];
+  // 1. Process cover image
+  if (imageCover) {
+    // delete old cover image
+    await utilRemove.removeOldTourPhotos('imageCover', tour);
 
-  await Promise.all(
-    req.files.images.map(async (file, i) => {
-      const filename = `tour-${req.params.id}-${Date.now()}-${i + 1}.jpeg`;
+    req.body.imageCover = `tour-${req.params.id}-${Date.now()}-cover.jpeg`;
 
-      await sharp(file.buffer)
-        .resize(2000, 1333)
-        .toFormat('jpeg')
-        .jpeg({ quality: 90 })
-        .toFile(`public/img/tours/${filename}`);
+    await sharp(imageCover[0].buffer)
+      .resize(2000, 1333)
+      .toFormat('jpeg')
+      .jpeg({ quality: 90 })
+      .toFile(`public/img/tours/${req.body.imageCover}`);
+  }
 
-      req.body.images.push(filename);
-    })
-  );
+  // 2. Process images
+  if (images) {
+    // delete old images
+    await utilRemove.removeOldTourPhotos('images', tour);
+
+    req.body.images = [];
+
+    await Promise.all(
+      images.map(async (file, i) => {
+        const filename = `tour-${req.params.id}-${Date.now()}-${i + 1}.jpeg`;
+
+        await sharp(file.buffer)
+          .resize(2000, 1333)
+          .toFormat('jpeg')
+          .jpeg({ quality: 90 })
+          .toFile(`public/img/tours/${filename}`);
+
+        req.body.images.push(filename);
+      })
+    );
+  }
 
   next();
 });
