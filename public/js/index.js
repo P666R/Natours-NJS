@@ -6,6 +6,7 @@ import 'regenerator-runtime/runtime';
 import { displayMap } from './leaflet.js';
 import { login, logout } from './login.js';
 import { updateSettings } from './updateSettings.js';
+import { bookTour } from './stripe.js';
 
 // dom elements
 const leaflet = document.getElementById('map');
@@ -13,6 +14,7 @@ const loginForm = document.querySelector('.form--login');
 const logoutBtn = document.querySelector('.nav__el--logout');
 const userDataForm = document.querySelector('.form-user-data');
 const userPasswordForm = document.querySelector('.form-user-password');
+const bookBtn = document.getElementById('book-tour');
 
 // delegation
 if (leaflet) {
@@ -62,12 +64,12 @@ if (userPasswordForm) {
   });
 }
 
-const accountFileInput = userDataForm.querySelector('.form__upload');
-const img = userDataForm.querySelector('.form__user-photo');
+const accountFileInput = userDataForm?.querySelector('.form__upload');
+const img = userDataForm?.querySelector('.form__user-photo');
 
 // display user photo before upload
 if (accountFileInput) {
-  userDataForm.addEventListener('change', (e) => {
+  accountFileInput.addEventListener('change', (e) => {
     const file = accountFileInput.files[0];
     if (!file) return;
 
@@ -76,5 +78,13 @@ if (accountFileInput) {
     img.onload = function () {
       URL.revokeObjectURL(this.src);
     };
+  });
+}
+
+if (bookBtn) {
+  bookBtn.addEventListener('click', (e) => {
+    e.target.textContent = 'Processing...';
+    const { tourId } = e.target.dataset;
+    bookTour(tourId);
   });
 }
