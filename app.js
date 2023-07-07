@@ -13,6 +13,7 @@ const globalErrorHandler = require('./controllers/errorController');
 const tourRouter = require('./routes/tourRoutes');
 const userRouter = require('./routes/userRoutes');
 const reviewRouter = require('./routes/reviewRoutes');
+const bookingRouter = require('./routes/bookingRoutes');
 const viewRouter = require('./routes/viewRoutes');
 
 const app = express();
@@ -35,11 +36,14 @@ const scriptSrcUrls = [
   'https://tile.openstreetmap.org',
   'https://*.cloudflare.com/',
   'https://cdnjs.cloudflare.com/ajax/libs/axios/1.4.0/axios.min.js',
+  'https://js.stripe.com/v3/',
+  'https://checkout.stripe.com',
 ];
 const styleSrcUrls = [
   'https://unpkg.com/',
   'https://tile.openstreetmap.org',
   'https://fonts.googleapis.com/',
+  'https://checkout.stripe.com',
 ];
 const connectSrcUrls = [
   'https://unpkg.com',
@@ -47,6 +51,7 @@ const connectSrcUrls = [
   'https://*.cloudflare.com/',
   'https://bundle.js:*',
   'ws://localhost:*/',
+  '*.stripe.com',
 ];
 const fontSrcUrls = ['fonts.googleapis.com', 'fonts.gstatic.com'];
 
@@ -61,6 +66,7 @@ app.use(
       objectSrc: [],
       imgSrc: ["'self'", 'blob:', 'data:', 'https:'],
       fontSrc: ["'self'", ...fontSrcUrls],
+      frameSrc: ['*.stripe.com', '*.stripe.network'],
     },
   })
 );
@@ -116,6 +122,7 @@ app.use('/', viewRouter);
 app.use('/api/v1/tours', tourRouter);
 app.use('/api/v1/users', userRouter);
 app.use('/api/v1/reviews', reviewRouter);
+app.use('/api/v1/bookings', bookingRouter);
 
 app.all('*', (req, res, next) => {
   next(new AppError(`Cant find ${req.originalUrl} on this server`, 404));
