@@ -28,6 +28,7 @@
     "@stripe/stripe-js": "^1.54.1",
     "@swc/helpers": "^0.5.1",
     "bcryptjs": "^2.4.3",
+    "compression": "^1.7.4",
     "cookie-parser": "^1.4.6",
     "core-js": "^3.31.0",
     "dotenv": "^16.0.3",
