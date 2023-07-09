@@ -96,7 +96,10 @@ exports.protect = catchAsync(async (req, res, next) => {
   }
 
   if (!token) {
-    if (req.originalUrl.startsWith('/me')) {
+    if (
+      req.originalUrl.startsWith('/me') ||
+      req.originalUrl.startsWith('/my-tours')
+    ) {
       return res.redirect('/');
     }
     return next(
