@@ -1,10 +1,8 @@
-<h1 align="center">
 # Natours - Tour Booking Site
-</h1>
 
-# Deployed Version: https://natours-i5ww.onrender.com
+### Deployed Version: https://natours-i5ww.onrender.com
 
-## Key Features
+### Key Features
 
 - Authentication and Authorization
   - Login and logout
@@ -58,7 +56,7 @@ Before using the API, you need to set the variables in Postman depending on your
 - {{password}} with your user password as value.
 ```
 
-Check [Natours API Documentation](https://documenter.getpostman.com/view/8689170/SVmzvwpY?version=latest) for more info.
+Check [Natours API Documentation](https://documenter.getpostman.com/view/27141986/2s93zH2eHP) for more info.
 
 <b> API Features: </b>
 
