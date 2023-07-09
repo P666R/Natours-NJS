@@ -8,6 +8,8 @@ const xss = require('xss-clean');
 const hpp = require('hpp');
 const cookieParser = require('cookie-parser');
 const compression = require('compression');
+const enforce = require('express-sslify');
+const cors = require('cors');
 
 const AppError = require('./utils/appError');
 const globalErrorHandler = require('./controllers/errorController');
@@ -18,11 +20,25 @@ const bookingRouter = require('./routes/bookingRoutes');
 const viewRouter = require('./routes/viewRoutes');
 
 const app = express();
+if (process.env.NODE_ENV === 'production') {
+  app.enable('trust proxy');
+  app.use(enforce.HTTPS({ trustProtoHeader: true }));
+}
 
 app.set('view engine', 'pug');
 app.set('views', path.join(__dirname, 'views'));
 
 // global middlewares
+
+// implement cors
+app.use(cors());
+// Access-Control-Allow-Origin *
+// api.natours.com, front-end natours.com
+// app.use(cors({
+//   origin: 'https://www.natours.com'
+// }))
+app.options('*', cors());
+// app.options('/api/v1/tours/:id', cors());
 
 // serving static files
 // app.use(express.static(`${__dirname}/public`));
